@@ -68,7 +68,7 @@ These states are inferred from float-switch transitions. The system does not dir
 
 The Home Assistant dashboard displays current water-level sensor states, inferred operating states, cycle statistics, and duration measurements.
 
-TBD - Image of the sensors
+<img width="1283" height="1345" alt="IMG_1477" src="https://github.com/user-attachments/assets/0e3a40c9-0e57-4f2a-8d60-2e1bd7a01394" />
 
 ### Watch the Aquaponics Monitoring System in Action
 
