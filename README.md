@@ -97,7 +97,8 @@ The monitoring system uses:
 - Electrical connections and mounting hardware
 - Existing flood-and-drain aquaponics grow bed
 
-See Hardware Documentation for component information, wiring, and installation details.
+<img width="375" height="450" alt="Aquaponics_Float_Monitor" src="https://github.com/user-attachments/assets/0e76a0b2-fc18-42f5-9fc2-0e97f33938f2" />
+
 
 ## Software
 - Microcontroller	- ESP32	- Sensor acquisition
