@@ -1,0 +1,39 @@
+- id: '1794939371431'
+  alias: Aquaponics - Cycle Timeout Alarm
+  description: Alert if either float remains in an abnormal state for 5 minutes.
+  triggers:
+  - trigger: state
+    id: upper_timeout
+    entity_id:
+    - !secret aquaponics_upper_float
+    to:
+    - 'on'
+    for:
+      minutes: 5
+  - trigger: state
+    id: lower_timeout
+    entity_id: !secret aquaponics_lower_float
+    to: 'off'
+    for:
+      minutes: 5
+  actions:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id: upper_timeout
+      sequence:
+      - action: !secret aquaponics_notification_service
+        data:
+          title: ⚠️ Aquaponics - Upper Float Timeout
+          message: Upper float has remained ON for 5 minutes. Check the bell siphon.
+    - conditions:
+      - condition: trigger
+        id: lower_timeout
+      sequence:
+      - action: !secret aquaponics_notification_service
+        data:
+          title: ⚠️ Aquaponics - Lower Float Timeout
+          message: Lower float has remained OFF for 5 minutes. Check the pump.
+    - conditions: []
+      sequence: []
+  mode: single

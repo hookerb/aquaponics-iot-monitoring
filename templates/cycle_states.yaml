@@ -1,0 +1,37 @@
+- triggers:
+    - trigger: state
+      entity_id: !secret aquaponics_upper_float
+      to: "on"
+      id: upper_on
+
+    - trigger: state
+      entity_id: !secret aquaponics_upper_float
+      to: "off"
+      id: upper_off
+
+    - trigger: state
+      entity_id: !secret aquaponics_lower_float
+      to: "on"
+      id: lower_on
+
+    - trigger: state
+      entity_id: !secret aquaponics_lower_float
+      to: "off"
+      id: lower_off
+
+  sensor:
+    - name: "Aquaponics Cycle State"
+      unique_id: aquaponics_cycle_state
+      icon: mdi:water-sync
+      state: >-
+        {% if trigger.id == 'lower_on' %}
+          Filling
+        {% elif trigger.id == 'upper_on' %}
+          Full
+        {% elif trigger.id == 'upper_off' %}
+          Draining
+        {% elif trigger.id == 'lower_off' %}
+          Waiting for Siphon Cutoff
+        {% else %}
+          Unknown
+        {% endif %}

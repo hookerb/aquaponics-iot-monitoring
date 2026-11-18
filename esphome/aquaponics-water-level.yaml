@@ -1,0 +1,194 @@
+# Board: ESP32 DevKit V1 (Espressif)
+# Definition: definitions/boards/esp32-devkit-v1/manifest.yaml
+
+esphome:
+  name: aquaponics-water-level
+  friendly_name: aquaponics-water-level
+
+esp32:
+  variant: esp32
+  flash_size: 4MB
+  framework:
+    type: esp-idf
+
+logger:
+
+api:
+  encryption:
+    key: ${aquaponics_api_encryption_key}
+
+ota:
+  - platform: esphome
+
+wifi:
+  ssid: ${wifi_ssid}
+  password: ${wifi_password}
+  ap:
+    ssid: aquaponics-wate Fallback Hotspot
+    password: ${aquaponics_fallback_password}
+
+captive_portal:
+
+globals:
+  - id: cycle_state
+    type: int
+    restore_value: no
+    initial_value: '0'
+
+  - id: fill_start
+    type: uint32_t
+    restore_value: no
+    initial_value: '0'
+
+  - id: drain_start
+    type: uint32_t
+    restore_value: no
+    initial_value: '0'
+
+  - id: below_low_start
+    type: uint32_t
+    restore_value: no
+    initial_value: '0'
+
+  - id: below_low_valid
+    type: bool
+    restore_value: no
+    initial_value: 'false'
+    
+binary_sensor:
+  # Short pulse for Home Assistant cycle history
+  - platform: template
+    name: "Aquaponics Cycle Complete"
+    id: cycle_complete_pulse
+  
+  - platform: gpio
+    name: "Aquaponics Upper Float"
+    id: upper_float
+    pin:
+      number: GPIO25
+      mode:
+        input: true
+        pullup: true
+      inverted: false
+    filters:
+      - delayed_on: 500ms
+      - delayed_off: 500ms
+
+    # Upper float rises: fill interval finishes
+    on_press:
+      then:
+        - lambda: |-
+            if (id(cycle_state) == 1) {
+
+              float elapsed =
+                (uint32_t)(millis() - id(fill_start))
+                / 1000.0f;
+
+              id(fill_duration).publish_state(elapsed);
+              id(cycle_state) = 2;
+            }
+
+    # Upper float falls: drain interval starts
+    on_release:
+      then:
+        - lambda: |-
+            if (id(cycle_state) == 2) {
+              id(drain_start) = millis();
+              id(cycle_state) = 3;
+            }
+    
+  - platform: gpio
+    name: "Aquaponics Lower Float"
+    id: lower_float
+    pin:
+      number: GPIO26
+      mode:
+        input: true
+        pullup: true
+      inverted: false
+    filters:
+      - delayed_on: 500ms
+      - delayed_off: 500ms
+
+    # Lower float rises: filling starts
+    on_press:
+      then:
+        - lambda: |-
+            if (id(cycle_state) == 0) {
+
+              // Measure how long water was below lower float
+              if (id(below_low_valid)) {
+                float elapsed =
+                  (uint32_t)(millis() - id(below_low_start))
+                  / 1000.0f;
+
+                id(below_low_duration).publish_state(elapsed);
+              }
+
+              id(fill_start) = millis();
+              id(cycle_state) = 1;
+            }
+    
+    # Lower float falls: drain interval finishes
+    on_release:
+      then:
+        - lambda: |-
+            if (id(cycle_state) == 3) {
+
+              float elapsed =
+                (uint32_t)(millis() - id(drain_start))
+                / 10000.0f;
+
+              id(drain_duration).publish_state(elapsed);
+
+              // Completed one full flood-and-drain cycle
+
+              // Mark beginning of below-low interval
+              id(below_low_start) = millis();
+              id(below_low_valid) = true;
+
+              id(cycle_state) = 0;
+
+              // Notify Home Assistant that a cycle completed
+              id(cycle_complete_pulse).publish_state(true);
+              id(reset_cycle_pulse).execute();
+
+            } else if (id(cycle_state) == 1) {
+              // Lower float dropped before reaching upper float.
+              // Discard the incomplete cycle.
+              id(cycle_state) = 0;
+            }
+    
+sensor:
+    
+  - platform: template
+    name: "Aquaponics Fill Duration"
+    id: fill_duration
+    unit_of_measurement: "s"
+    accuracy_decimals: 1
+    state_class: measurement
+    update_interval: never
+
+  - platform: template
+    name: "Aquaponics Drain Duration"
+    id: drain_duration
+    unit_of_measurement: "s"
+    accuracy_decimals: 1
+    state_class: measurement
+    update_interval: never
+
+  - platform: template
+    name: "Aquaponics Below Low Duration"
+    id: below_low_duration
+    unit_of_measurement: "s"
+    accuracy_decimals: 1
+    state_class: measurement
+    update_interval: never
+
+script:
+  - id: reset_cycle_pulse
+    mode: restart
+    then:
+      - delay: 2s
+      - lambda: |-
+          id(cycle_complete_pulse).publish_state(false);

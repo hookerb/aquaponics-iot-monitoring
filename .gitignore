@@ -1,0 +1,29 @@
+# ESPHome
+esphome/.esphome/
+esphome/secrets.yaml
+**/.esphome/
+
+# Home Assistant
+secrets.yaml
+**/secrets.yaml
+.storage/
+*.db
+*.db-shm
+*.db-wal
+.env
+.env.*
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Miscellaneous
+.DS_Store
+*.log
+*.swp
+*.swo
+
+# Logs
+*.log
+

@@ -1,0 +1,42 @@
+title: Aquaponics IoT Monitoring
+
+views:
+  - title: Aquaponics
+    path: aquaponics
+    type: masonry
+    icon: mdi:fishbowl
+
+    cards:
+      - type: entities
+        title: Aquaponics Flood & Drain Grow Bed
+        entities:
+          - entity: sensor.aquaponics_cycle_state
+            name: Current State
+            icon: mdi:water-sync
+            secondary_info: last_changed
+
+          - type: divider
+
+          - entity: sensor.aquaponics_cycles_last_60_min
+            name: Cycles Last 60 Minutes
+            icon: mdi:sync
+
+          - entity: sensor.fish_tanks_aquaponics_water_level_aquaponics_fill_duration
+            name: Last Fill Duration
+            icon: mdi:arrow-up-bold
+
+          - entity: sensor.fish_tanks_aquaponics_water_level_aquaponics_drain_duration
+            name: Last Drain Duration
+            icon: mdi:arrow-down-bold
+
+          - entity: sensor.fish_tanks_aquaponics_water_level_aquaponics_below_low_duration
+            name: Last Siphon Cutoff Duration
+            icon: mdi:timer-outline
+
+          - type: divider
+
+          - entity: binary_sensor.fish_tanks_aquaponics_water_level_aquaponics_upper_float
+            name: Upper Float
+
+          - entity: binary_sensor.fish_tanks_aquaponics_water_level_aquaponics_lower_float
+            name: Lower Float

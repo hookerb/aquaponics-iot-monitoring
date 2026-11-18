@@ -1,0 +1,7 @@
+  - platform: history_stats
+    name: "Aquaponics Cycles Last 60 Min"
+    entity_id: !secret aquaponics_cycle_complete_entity
+    state: "on"
+    type: count
+    start: "{{ now() - timedelta(minutes=60) }}"
+    end: "{{ now() }}"
