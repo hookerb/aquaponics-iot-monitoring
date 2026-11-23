@@ -1,4 +1,4 @@
-##  Add the dashboard to HA be adding this to configureation.yaml
+##  Add the dashboard to HA by adding this to configuration.yaml
 ```yaml
 # Aquaponics IoT Monitoring Dashboard (GitHub source)
 lovelace:

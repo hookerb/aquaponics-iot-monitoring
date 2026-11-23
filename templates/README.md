@@ -1,4 +1,4 @@
-## update configureation.yaml
+## Include this file into HA by addding it to configuration.yaml
 
 ```yaml
 # Aquaponics monitoring templates (GitHub source)
