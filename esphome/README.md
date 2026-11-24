@@ -1,6 +1,6 @@
 # Configure ESPHome to read this add on:
 
-##Create the device in ESPHome Builder with the yaml below:
+## Create the device in ESPHome Builder with the yaml below:
 ```yaml
 # Aquaponics IoT Monitoring
 # Source: aquaponics-iot-monitoring Git repository
