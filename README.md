@@ -43,26 +43,40 @@ Home Assistant provides historical analysis, dashboards, andautomated notificati
 - Home Assistant automation and template sensors
 - Home Assistant monitoring dashboard
 
+### Information gathered
+This system intends to answer the following questions regarding the health of the system.
+- How often is the grow bed filled?
+- How long does it take to drain the bed?
+- How long does it take to break the bell siphon?
+- How long does it take to fill the grow bed up?
+
+### Common Error States
+- Water has risen to the high water mark, but has stayed above it for some time.  This can be caused my many different factors such as water flow into the bed, or physical characteristics of the drain or bell siphon.
+- Water has dropped below the low water mark, and has stayed at that low point for some time.  This can also be caused by various factors from water flow to physical drain characteristics.
+
 ## How It Works
 
-The aquaponics system uses a bell siphon to periodically drain the grow bed into a sump, where water is constantly pumped into the fish tank which steatily overflows into the grow bed.
+The aquaponics system uses a bell siphon to periodically drain the grow bed into a sump tank below it. The water that is drained into the sump is then pumped at a steady rate into a 65 gallon fishtank on display in the other room.  The water then overflows and a series of pipes direct it back into the flood and drain pan where the precession starts again.
 
-As the bed fills, water passes the lower and upper float switches. Once the water reaches the appropriate level, the bell siphon initiates drainage.
-
-The monitoring system tracks these transitions to identify operating phases and calculate elapsed times.
+### Physical Sensor Input
+- Top float off->on (while bottom float is on) - Water has risen to the high water mark.
+- Top float on->off (While bottom float is on) - Water has dropped below the high water mark.
+- Bottom float on->off (While top float is off) - Water has drained down below the lowest water mark.
+- Bottom float off->on (While top float is off) - Siphon has stopped, and water has begun to fill.
 
 ### Operating States
 - Filling	- Water level is rising
 - Draining - Water level is falling
-- Waiting for Siphon Cutoff - Water has fallen below the lower float switch, and the siphon will eventually automatically cut off.
+- Waiting for Siphon Cutoff - Water has fallen below the lower float switch.
 
 These states are inferred from float-switch transitions. The system does not directly measure water flow through the siphon.
 
 ### Cycle Measurements
-- Fill Duration - Time associated with the filling portion of the cycle
-- Drain Duration - Time associated with the draining portion of the cycle
-- Siphon Cutoff Duration - Time spent below the lower float switch
-- Cycles Last 60 Minutes- Number of completed cycles during the preceding hour
+- Fill Duration - Time from lower switch on to upper switch on.
+- Drain Duration - Time from the upper switch off to lower switch off.
+- Siphon Cutoff Duration - Time spent between lower switch off to lower switch on.
+- Siphon Start Duration - Time from the upper switch on to upper switch off.
+- Cycles Last 60 Minutes - Number of completed cycles during the preceding hour.
 
 ### Aquaponics Monitoring Dashboard
 
@@ -98,7 +112,6 @@ The monitoring system uses:
 - Existing flood-and-drain aquaponics grow bed
 
 <img width="375" height="450" alt="Aquaponics_Float_Monitor" src="https://github.com/user-attachments/assets/0e76a0b2-fc18-42f5-9fc2-0e97f33938f2" />
-
 
 ## Software
 - Microcontroller	- ESP32	- Sensor acquisition
